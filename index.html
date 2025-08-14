@@ -658,38 +658,64 @@
                     <h4>⚙️ Technical Implementation & DAX Calculations</h4>
                     <div class="highlights-grid">
                         <div class="highlight-item">
-                            <h4>Key DAX Measures</h4>
+                            <h4>Key DAX Measures & Business Logic</h4>
                             <div style="background: #f8f9ff; padding: 10px; border-radius: 5px; margin-top: 8px; font-family: 'Courier New', monospace; font-size: 0.85em;">
-                                <strong>LeadTimeReductionPct =</strong><br>
-                                DIVIDE(<br>
-                                &nbsp;&nbsp;[Current Lead Time] - [Target Lead Time],<br>
-                                &nbsp;&nbsp;[Target Lead Time], 0<br>
-                                ) * 100<br><br>
-                                <strong>InventoryHoldingCost =</strong><br>
-                                SUMX(Orders,<br>
-                                &nbsp;&nbsp;[Inventory_Level] * [Unit_Cost] * [Holding_Rate]<br>
-                                )
+                                <strong>Lead Time Performance Tracking:</strong><br>
+                                LeadTimeReductionPct = DIVIDE(<br>
+                                &nbsp;&nbsp;[LeadTime_Baseline] - [LeadTime_Current],<br>
+                                &nbsp;&nbsp;[LeadTime_Baseline])<br><br>
+                                
+                                <strong>Inventory Cost Optimization:</strong><br>
+                                InventoryCostReductionPct = DIVIDE(<br>
+                                &nbsp;&nbsp;[InventoryCost_2021] - [InventoryCost_Current],<br>
+                                &nbsp;&nbsp;[InventoryCost_2021])<br><br>
+                                
+                                <strong>Goal Achievement Indicators:</strong><br>
+                                InventoryGoalMet = IF([InventoryCostReductionPct] >= 0.10,<br>
+                                &nbsp;&nbsp;"✔ Goal Met", "❌ Below Target")<br>
+                                LeadTimeGoalMet = IF([LeadTimeReductionPct] >= 0.15,<br>
+                                &nbsp;&nbsp;"✔ Goal Met", "❌ Below Target")
                             </div>
                         </div>
                         <div class="highlight-item">
-                            <h4>Calculated Columns</h4>
-                            <div style="background: #f8f9ff; padding: 10px; border-radius: 5px; margin-top: 8px; font-family: 'Courier New', monospace; font-size: 0.85em;">
-                                <strong>Order_Size_Category =</strong><br>
-                                IF([Order_Quantity] >= 1000, "Large Order",<br>
-                                &nbsp;&nbsp;IF([Order_Quantity] >= 500, "Medium Order",<br>
-                                &nbsp;&nbsp;&nbsp;&nbsp;"Small Order"))<br><br>
-                                <strong>Delay_Category =</strong><br>
-                                IF([Delay_Days] <= 0, "On-Time",<br>
-                                &nbsp;&nbsp;IF([Delay_Days] <= 5, "Minor Delay",<br>
-                                &nbsp;&nbsp;&nbsp;&nbsp;"Severe Delay"))
+                            <h4>Technical Implementation Details</h4>
+                            <div style="background: #f8f9ff; padding: 10px; border-radius: 5px; margin-top: 8px;">
+                                <strong>Baseline Establishment:</strong>
+                                <ul style="margin: 8px 0; padding-left: 20px; font-size: 0.9em; color: #555;">
+                                    <li><strong>LeadTime_Baseline:</strong> Q1 2021 average as performance benchmark</li>
+                                    <li><strong>InventoryCost_2021:</strong> 2021 full-year baseline for cost comparison</li>
+                                </ul>
+                                
+                                <strong>Performance Calculations:</strong>
+                                <ul style="margin: 8px 0; padding-left: 20px; font-size: 0.9em; color: #555;">
+                                    <li><strong>Cost Factor:</strong> Applied standard multiplier of 5 for inventory holding cost</li>
+                                    <li><strong>Period Filtering:</strong> Used CALCULATE with year/quarter filters for baseline comparison</li>
+                                    <li><strong>Visual Indicators:</strong> Implemented checkmarks (✔) and cross marks (❌) for goal status</li>
+                                </ul>
+                                
+                                <strong>Time Intelligence:</strong>
+                                <ul style="margin: 8px 0; padding-left: 20px; font-size: 0.9em; color: #555;">
+                                    <li><strong>MonthYear:</strong> FORMAT([Date], "MMM YYYY") for readable date display</li>
+                                    <li><strong>YearMonthSort:</strong> FORMAT([Date], "YYYYMM") for proper chronological sorting</li>
+                                </ul>
                             </div>
                         </div>
                         <div class="highlight-item">
-                            <h4>Data Processing</h4>
-                            <p><strong>Dataset:</strong> 4,828 order records spanning 3 years<br>
-                            <strong>Cleaning:</strong> Applied winsorization for outlier treatment<br>
-                            <strong>Features:</strong> Created 8+ business logic flags for risk assessment<br>
-                            <strong>Validation:</strong> Cross-verified with production schedules</p>
+                            <h4>Data Processing & Feature Engineering</h4>
+                            <p><strong>Dataset Cleaning:</strong> Reduced from 6,814 to 4,828 rows after handling nulls and duplicates<br>
+                            <strong>Missing Data:</strong> Applied data imputation (Change_Type = 'Unknown') and removed ~5% missing records<br>
+                            <strong>Outlier Treatment:</strong> Applied IQR winsorization on Order_Quantity, Inventory_Level, Lead_Time_Days, Delay_Days<br>
+                            <strong>Feature Engineering:</strong> Created temporal features (Year, Quarter, Month) and business categories</p>
+                            
+                            <div style="background: #f8f9ff; padding: 10px; border-radius: 5px; margin-top: 8px;">
+                                <strong>Advanced Data Processing:</strong>
+                                <ul style="margin: 8px 0; padding-left: 20px; font-size: 0.9em; color: #555;">
+                                    <li><strong>Normalization:</strong> Used MinMaxScaler for consistent visual comparison across metrics</li>
+                                    <li><strong>Categorization:</strong> Discretized Delay_Days into On-Time/Moderate/Severe categories</li>
+                                    <li><strong>Business Logic:</strong> Created Order_Size_Category (Small/Medium/Large) based on quantity thresholds</li>
+                                    <li><strong>Time Intelligence:</strong> Parsed and aligned Month-Year values for proper Power BI sorting</li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -701,22 +727,22 @@
                         <div class="dashboard-item" onclick="openModal('demand-overview.jpg')">
                             <img src="demand-overview.jpg" alt="Business KPIs Overview Dashboard" class="dashboard-image">
                             <div class="dashboard-caption">
-                                <strong>Business KPIs & Performance Overview</strong><br>
-                                <em>Purpose:</em> Executive-level monitoring of key metrics, performance against targets, and quarterly trends analysis
+                                <strong>Business KPIs & Performance Snapshot</strong><br>
+                                <em>Purpose:</em> Monthly/quarterly review meetings with stakeholders including planners, warehouse leads, and finance teams
                             </div>
                         </div>
                         <div class="dashboard-item" onclick="openModal('demand-trends.jpg')">
                             <img src="demand-trends.jpg" alt="Demand and Production Trends Dashboard" class="dashboard-image">
                             <div class="dashboard-caption">
-                                <strong>Demand & Production Trends Analysis</strong><br>
-                                <em>Purpose:</em> Seasonal pattern identification, product mix analysis, and inventory level optimization across warehouses
+                                <strong>Order Patterns & Product Mix Analysis</strong><br>
+                                <em>Purpose:</em> Analyzing Q4 demand peaks, large order impacts, machine type demand balance, and warehouse inventory levels
                             </div>
                         </div>
                         <div class="dashboard-item" onclick="openModal('demand-risks.jpg')">
                             <img src="demand-risks.jpg" alt="Delays and Inventory Risk Dashboard" class="dashboard-image">
                             <div class="dashboard-caption">
-                                <strong>Delays & Inventory Risk Assessment</strong><br>
-                                <em>Purpose:</em> Early warning system for operational bottlenecks, delay pattern analysis, and risk mitigation strategies
+                                <strong>Operational Inefficiencies Assessment</strong><br>
+                                <em>Purpose:</em> Identifying risk zones (WH002), dealer performance issues (C&E), and inventory imbalance patterns
                             </div>
                         </div>
                     </div>
@@ -727,30 +753,30 @@
                     <h4>📊 Dashboard Component Analysis</h4>
                     <div class="highlights-grid">
                         <div class="highlight-item">
-                            <h4>KPI Cards & Metrics</h4>
+                            <h4>Performance KPI Cards</h4>
                             <ul style="margin-top: 10px; color: #555; font-size: 0.9em;">
-                                <li><strong>Average Lead Time (27.69 days):</strong> Calculated using AVERAGE(Lead_Time_Days)</li>
-                                <li><strong>Order Count (4,828):</strong> Total orders with DISTINCTCOUNT(Order_ID)</li>
-                                <li><strong>Inventory Cost (RM6.4M):</strong> Holding cost calculation with tooltips showing breakdown</li>
-                                <li><strong>Performance vs Target:</strong> Red/green indicators based on threshold comparisons</li>
+                                <li><strong>Average Lead Time (27.69 days):</strong> Baseline performance measurement with year-over-year comparison</li>
+                                <li><strong>Order Count (4,828):</strong> Total transaction volume across all warehouses and dealers</li>
+                                <li><strong>Inventory Holding Cost (6413K):</strong> Calculated using SUM(Inventory_Level) × RM5 fixed rate</li>
+                                <li><strong>Goal Achievement Indicators:</strong> Visual ✔/❌ status showing performance vs 15% and 10% targets</li>
                             </ul>
                         </div>
                         <div class="highlight-item">
-                            <h4>Trend Analysis Charts</h4>
+                            <h4>Trend Analysis Visualizations</h4>
                             <ul style="margin-top: 10px; color: #555; font-size: 0.9em;">
-                                <li><strong>Lead Time by Quarter:</strong> Line chart showing seasonal patterns with year-over-year comparison</li>
-                                <li><strong>Order Quantity Trends:</strong> Stacked column showing machine type distribution</li>
-                                <li><strong>Inventory Levels:</strong> Bar chart comparing warehouse performance</li>
-                                <li><strong>Tooltips:</strong> Detailed breakdowns with variance analysis and drill-through capabilities</li>
+                                <li><strong>Quarterly Lead Time Trends:</strong> Multi-year comparison revealing seasonal patterns and stagnant performance</li>
+                                <li><strong>Order Quantity by Quarter:</strong> Line chart highlighting Q4 demand surges and capacity challenges</li>
+                                <li><strong>Machine Type Distribution:</strong> Stacked charts showing Type 4 consistently handles highest volumes</li>
+                                <li><strong>Warehouse Inventory Levels:</strong> Bar chart identifying WH002 overstocking issues</li>
                             </ul>
                         </div>
                         <div class="highlight-item">
-                            <h4>Risk Assessment Matrix</h4>
+                            <h4>Risk Assessment Tools</h4>
                             <ul style="margin-top: 10px; color: #555; font-size: 0.9em;">
-                                <li><strong>Dealer Performance Table:</strong> Color-coded risk scores using conditional formatting</li>
-                                <li><strong>Delay Analysis:</strong> Stacked bar showing on-time vs delayed orders by quarter</li>
-                                <li><strong>Interactive Filters:</strong> Year, warehouse, dealer, and order size category slicers</li>
-                                <li><strong>Cross-filtering:</strong> Dynamic updates across all visuals for comprehensive analysis</li>
+                                <li><strong>Dealer Performance Matrix:</strong> Color-coded risk scores identifying Dealers C & E performance issues</li>
+                                <li><strong>Delay Category Analysis:</strong> Stacked bars showing severe delays affecting 1 in 5 orders in Q4</li>
+                                <li><strong>Interactive Filtering:</strong> Year, Warehouse, Dealer, Machine Type, and Order Size slicers for detailed analysis</li>
+                                <li><strong>Cross-Dashboard Navigation:</strong> Seamless flow between overview, trends, and risk assessment views</li>
                             </ul>
                         </div>
                     </div>
@@ -759,32 +785,46 @@
                 <!-- Key Findings & Impact -->
                 <div class="highlights-grid">
                     <div class="highlight-item">
-                        <h4>Critical Insights Discovered</h4>
+                        <h4>Critical Business Insights</h4>
                         <ul style="margin-top: 10px; color: #555;">
-                            <li><strong>WH002 Risk Zone:</strong> Highest delay probability (54%) requiring immediate attention</li>
-                            <li><strong>Q4 Demand Surge:</strong> 33K order spike creating capacity bottlenecks</li>
-                            <li><strong>Large Order Impact:</strong> 65% of orders generate disproportionate lead times</li>
-                            <li><strong>Dealer Variability:</strong> Performance ranges from 47% to 58% efficiency</li>
+                            <li><strong>Stagnant Performance:</strong> 0.01% lead time change vs Q1 2021 despite increased order volumes</li>
+                            <li><strong>WH002 Risk Zone:</strong> Highest delay risk due to logistics, forecasting, or capacity issues</li>
+                            <li><strong>Q4 Demand Peak:</strong> Critical surge requiring proactive production and material planning</li>
+                            <li><strong>Large Order Impact:</strong> Dominate volume and create scheduling delays across system</li>
+                            <li><strong>Dealer Performance Issues:</strong> Dealers C and E show recurring delays requiring intervention</li>
                         </ul>
                     </div>
                     <div class="highlight-item">
-                        <h4>Strategic Recommendations</h4>
+                        <h4>Operational Patterns Identified</h4>
                         <ul style="margin-top: 10px; color: #555;">
-                            <li><strong>Capacity Planning:</strong> Pre-position inventory for Q4 demand surge</li>
-                            <li><strong>WH002 Optimization:</strong> Implement lean manufacturing principles</li>
-                            <li><strong>Dealer Training:</strong> Focus on bottom 20% performer improvement</li>
-                            <li><strong>Predictive Alerts:</strong> Automated notifications for delay risks</li>
+                            <li><strong>Inventory Imbalance:</strong> WH002 overstocked while others face potential stockouts</li>
+                            <li><strong>Machine Type 4 Priority:</strong> Consistently handles highest order volumes, needs capacity focus</li>
+                            <li><strong>Seasonal Demand:</strong> Few large orders dominate total volume despite most orders being small</li>
+                            <li><strong>Severe Delays:</strong> Affect almost 1 in 5 orders, especially pronounced in Q4</li>
+                            <li><strong>Increased Holding Costs:</strong> Poor inventory turnover indicating excess stock in key locations</li>
                         </ul>
                     </div>
                     <div class="highlight-item">
-                        <h4>Projected Business Impact</h4>
+                        <h4>Strategic Recommendations Developed</h4>
                         <ul style="margin-top: 10px; color: #555;">
-                            <li><strong>Lead Time:</strong> 27.69 → 23.5 days (15% reduction achieved)</li>
-                            <li><strong>Cost Savings:</strong> RM640K annual inventory holding reduction</li>
-                            <li><strong>Efficiency Gain:</strong> 12% improvement in warehouse throughput</li>
-                            <li><strong>Customer Satisfaction:</strong> 25% reduction in delivery complaints</li>
+                            <li><strong>WH002 Focus:</strong> Address highest delay risk through logistics and capacity optimization</li>
+                            <li><strong>Inventory Rebalancing:</strong> Redistribute stock levels across warehouses to reduce costs</li>
+                            <li><strong>Q4 Proactive Planning:</strong> Adjust production cycles and inventory buffers for demand surges</li>
+                            <li><strong>Type 4 Prioritization:</strong> Enhanced scheduling and inventory planning for highest-volume machine type</li>
+                            <li><strong>Performance Monitoring:</strong> Quarterly dealer reviews and monthly lead time tracking implementation</li>
                         </ul>
                     </div>
+                </div>
+
+                <!-- Project Conclusion -->
+                <div class="project-overview">
+                    <h4>📋 Project Conclusion & Business Impact</h4>
+                    <p style="background: #f0f8ff; padding: 15px; border-radius: 8px; border-left: 4px solid #667eea;">
+                        <strong>Key Finding:</strong> The analysis confirms a seasonal demand pattern where a few large orders dominate total volume, despite most orders being small. However, the production system has not scaled with increased volume, resulting in static lead times, inventory mismatch, and dealer-specific fulfillment issues, especially at Warehouse WH002.
+                    </p>
+                    <p style="margin-top: 15px;">
+                        <strong>Strategic Value:</strong> These insights — visualized via targeted Power BI dashboards — highlight opportunities to adjust production plans, rebalance stock by dealer, and enhance warehouse coordination to meet demand efficiently. Implementation of recommendations can potentially reduce lead time up to 15% and inventory cost by 10%, based on observed trends and delay patterns.
+                    </p>
                 </div>
 
                 <div class="metrics">
@@ -794,10 +834,10 @@
                     </div>
                     <div class="metric">
                         <div class="metric-value">15%</div>
-                        <div class="metric-label">Lead Time Reduction</div>
+                        <div class="metric-label">Lead Time Reduction Target</div>
                     </div>
                     <div class="metric">
-                        <div class="metric-value">8</div>
+                        <div class="metric-value">11</div>
                         <div class="metric-label">DAX Measures Created</div>
                     </div>
                     <div class="metric">
@@ -813,13 +853,89 @@
                     <div class="project-icon">🔧</div>
                     <div>
                         <div class="project-title">Optimizing Steel Rod Offcut Utilization</div>
-                        <div class="project-tech">Python • Excel • Statistical Analysis | 2025</div>
+                        <div class="project-tech">Python • Excel • Statistical Analysis • EDA | 2025</div>
                     </div>
                 </div>
 
                 <div class="project-overview">
-                    <h4>Project Overview</h4>
-                    <p>Conducted comprehensive exploratory data analysis for a leading steel pipe manufacturer to minimize production waste and maximize material utilization. Identified patterns in offcut generation and developed data-driven recommendations to reduce scrap losses.</p>
+                    <h4>Executive Summary</h4>
+                    <p>Conducted comprehensive exploratory data analysis for a leading steel pipe manufacturer to minimize production waste and maximize material utilization. Built a data-driven system using EDA to identify waste patterns and developed strategic recommendations to reduce scrap losses and improve order fulfillment using leftover inventory.</p>
+                </div>
+
+                <!-- Business Context Section -->
+                <div class="project-overview">
+                    <h4>🎯 Business Understanding</h4>
+                    <div class="highlights-grid">
+                        <div class="highlight-item">
+                            <h4>⚠️ Business Problem</h4>
+                            <p>Underutilized steel rod offcuts are sold as scrap, leading to revenue loss and material wastage.</p>
+                            <p style="margin-top: 8px;"><strong>High Level Solution:</strong> Build a data-driven system using EDA to identify waste patterns and potential optimization.</p>
+                        </div>
+                        <div class="highlight-item">
+                            <h4>🎯 Objectives</h4>
+                            <ul style="margin-top: 8px; color: #555;">
+                                <li>Maximize utilization of steel rods</li>
+                                <li>Reduce material wastage by reusing inventory</li>
+                            </ul>
+                        </div>
+                        <div class="highlight-item">
+                            <h4>⚙️ Constraints</h4>
+                            <ul style="margin-top: 8px; color: #555;">
+                                <li>Current inventory usage relies on manual calculations</li>
+                                <li>Limited visibility into real-time offcut inventory</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="highlights-grid">
+                        <div class="highlight-item">
+                            <h4>🤝 Business Success Criteria</h4>
+                            <ul style="margin-top: 8px; color: #555;">
+                                <li>Increase offcut utilization by at least <strong>15%</strong></li>
+                                <li>Improve order fulfillment using leftover inventory</li>
+                            </ul>
+                        </div>
+                        <div class="highlight-item">
+                            <h4>💡 ML Success Criteria</h4>
+                            <p>Model accuracy in matching orders to existing offcuts.</p>
+                        </div>
+                        <div class="highlight-item">
+                            <h4>💰 Economic Success Criteria</h4>
+                            <p>Achieve cost savings of at least <strong>$1M through reduced scrap.</strong></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Data Analysis Methodology -->
+                <div class="project-overview">
+                    <h4>📊 Data Understanding & Processing</h4>
+                    <div class="highlights-grid">
+                        <div class="highlight-item">
+                            <h4>Dataset Characteristics</h4>
+                            <p><strong>Volume:</strong> ~33,000 rows of transaction-level rod order data<br>
+                            <strong>Source:</strong> Excel-based TMT rod inventory and sales records<br>
+                            <strong>Key Variables:</strong> Length, Dia, Rate, Quantity, Type, Date<br>
+                            <strong>Initial Findings:</strong> Highly skewed quantity distribution, many custom cuts ("CAB"), small orders (<2MT)</p>
+                        </div>
+                        <div class="highlight-item">
+                            <h4>Preprocessing Techniques</h4>
+                            <ul style="margin-top: 8px; color: #555; font-size: 0.9em;">
+                                <li><strong>Missing Value Treatment:</strong> Mean imputation for Quantity and Rate columns</li>
+                                <li><strong>Outlier Management:</strong> IQR-based winsorization for extreme values</li>
+                                <li><strong>Data Normalization:</strong> Min-Max scaling for Quantity and Rate</li>
+                                <li><strong>Feature Engineering:</strong> Created Is_Custom, Waste_Risk, and Potential_Loss flags</li>
+                                <li><strong>Discretization:</strong> Binned Quantity into Low/High categories</li>
+                            </ul>
+                        </div>
+                        <div class="highlight-item">
+                            <h4>Processing Challenges</h4>
+                            <ul style="margin-top: 8px; color: #555; font-size: 0.9em;">
+                                <li><strong>Mixed Data Types:</strong> Handling varied "Length" field formats</li>
+                                <li><strong>Custom Cut Rules:</strong> Identifying CAB and 10-12m format patterns</li>
+                                <li><strong>Data Quality:</strong> Inconsistent entries like "0 METER" requiring validation</li>
+                                <li><strong>Statistical Distribution:</strong> Mean ~5.9 MT, Skewness +2.2, Kurtosis ~10</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Dashboard Gallery for Project 2 -->
@@ -828,46 +944,82 @@
                     <div class="dashboard-grid">
                         <div class="dashboard-item" onclick="openModal('steel-preprocessing.jpg')">
                             <img src="steel-preprocessing.jpg" alt="Steel Rod Data Preprocessing Analysis" class="dashboard-image">
-                            <div class="dashboard-caption">Data Preprocessing & Statistical Analysis</div>
+                            <div class="dashboard-caption">
+                                <strong>Effect of Data Preprocessing</strong><br>
+                                <em>Purpose:</em> Before/after comparison showing winsorization impact, distribution normalization, and outlier treatment effectiveness
+                            </div>
                         </div>
                         <div class="dashboard-item" onclick="openModal('steel-insights.jpg')">
                             <img src="steel-insights.jpg" alt="Steel Rod Business Insights Analysis" class="dashboard-image">
-                            <div class="dashboard-caption">Business Insights & Waste Pattern Analysis</div>
+                            <div class="dashboard-caption">
+                                <strong>Business Insights & Waste Analysis</strong><br>
+                                <em>Purpose:</em> Waste risk identification, financial loss patterns, product type analysis, and scrap loss concentration by length
+                            </div>
                         </div>
                     </div>
                 </div>
 
+                <!-- Key Findings & Impact -->
                 <div class="highlights-grid">
                     <div class="highlight-item">
-                        <h4>Business Problem</h4>
-                        <p>Underutilized steel rod offcuts sold as scrap, leading to revenue loss and material wastage due to manual planning inefficiencies</p>
+                        <h4>Critical Business Insights</h4>
+                        <ul style="margin-top: 10px; color: #555;">
+                            <li><strong>Waste Risk Correlation:</strong> Custom cuts and small orders (<2 MT) highly correlated with material wastage</li>
+                            <li><strong>Custom Length Impact:</strong> CAB orders and non-standard lengths (7-10M) show low reuse potential</li>
+                            <li><strong>Financial Loss Patterns:</strong> Small, expensive orders create leftover pieces leading to higher losses</li>
+                            <li><strong>12M Rod Problem:</strong> 12M and customized lengths contribute disproportionately to scrap losses</li>
+                            <li><strong>High-Value Risk:</strong> Low correlation between quantity and rate means high-value losses occur on small orders</li>
+                        </ul>
                     </div>
                     <div class="highlight-item">
-                        <h4>Data Analysis</h4>
-                        <p>Processed 33,000+ transaction records, implemented IQR-based winsorization, and created custom risk flags for waste identification</p>
+                        <h4>Operational Gaps Identified</h4>
+                        <ul style="margin-top: 10px; color: #555;">
+                            <li><strong>Manual Planning Issues:</strong> Mismatches between order requirements and available offcuts</li>
+                            <li><strong>Tracking Inconsistencies:</strong> Inconsistent order format entries (e.g., "0 METER")</li>
+                            <li><strong>Standardization Gaps:</strong> Lack of standardization in order tracking and inventory management</li>
+                            <li><strong>Real-time Visibility:</strong> Limited visibility into current offcut inventory status</li>
+                            <li><strong>Risk Identification:</strong> No automated system for flagging high-waste-risk orders</li>
+                        </ul>
                     </div>
                     <div class="highlight-item">
-                        <h4>Key Insights</h4>
-                        <p>Custom cuts and small orders (<2MT) highly correlated with waste; 12M and customized lengths contribute disproportionately to losses</p>
+                        <h4>Strategic Improvement Plan</h4>
+                        <ul style="margin-top: 10px; color: #555;">
+                            <li><strong>Standard Length Promotion:</strong> Encourage standard lengths where possible to improve reusability</li>
+                            <li><strong>Ordering Rules Redesign:</strong> Implement minimum order requirements (e.g., 2MT for custom cuts)</li>
+                            <li><strong>Dynamic Pricing Strategy:</strong> Increase rates for risky orders, offer discounts for standard sizes</li>
+                            <li><strong>Offcut Matching System:</strong> Match existing offcuts to future demand requirements</li>
+                            <li><strong>Inventory Tracking:</strong> Store and track reusable pieces efficiently with automated flags</li>
+                        </ul>
                     </div>
-                    <div class="highlight-item">
-                        <h4>Strategic Solutions</h4>
-                        <p>Developed 5-point improvement strategy including pricing optimization, ordering rules redesign, and inventory matching system</p>
-                    </div>
+                </div>
+
+                <!-- Project Impact -->
+                <div class="project-overview">
+                    <h4>📋 Project Impact & Business Value</h4>
+                    <p style="background: #f0f8ff; padding: 15px; border-radius: 8px; border-left: 4px solid #667eea;">
+                        <strong>Data-Driven Transformation:</strong> Created business logic flags (Is_Custom, Waste_Risk, Potential_Loss) that enable automated identification of high-risk orders. These insights provide immediate actionable intelligence for inventory planning, pricing strategy, and order management optimization.
+                    </p>
+                    <p style="margin-top: 15px;">
+                        <strong>Strategic Value:</strong> The comprehensive EDA revealed that waste-risk orders are heavily concentrated in small-quantity custom orders, with 12M rods and customized lengths driving disproportionate financial losses. Implementation of the 5-point improvement strategy enables better inventory planning, minimizes scrap, and unlocks immediate cost savings through data-driven decision making.
+                    </p>
                 </div>
 
                 <div class="metrics">
                     <div class="metric">
                         <div class="metric-value">33K+</div>
-                        <div class="metric-label">Records Processed</div>
+                        <div class="metric-label">Transaction Records</div>
                     </div>
                     <div class="metric">
                         <div class="metric-value">15%</div>
                         <div class="metric-label">Target Waste Reduction</div>
                     </div>
                     <div class="metric">
+                        <div class="metric-value">5</div>
+                        <div class="metric-label">Business Logic Flags</div>
+                    </div>
+                    <div class="metric">
                         <div class="metric-value">$1M</div>
-                        <div class="metric-label">Potential Cost Savings</div>
+                        <div class="metric-label">Target Cost Savings</div>
                     </div>
                 </div>
             </div>
