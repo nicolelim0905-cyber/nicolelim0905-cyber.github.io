@@ -268,6 +268,94 @@
             margin-bottom: 20px;
         }
 
+        /* Dashboard Gallery Styles */
+        .dashboard-gallery {
+            margin: 20px 0;
+        }
+
+        .dashboard-gallery h4 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .dashboard-item {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+
+        .dashboard-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .dashboard-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .dashboard-caption {
+            padding: 15px;
+            text-align: center;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        /* Modal for larger dashboard view */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+        }
+
+        .modal-content {
+            position: relative;
+            margin: auto;
+            padding: 0;
+            width: 90%;
+            max-width: 1200px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .modal img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #667eea;
+        }
+
         .highlights-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -349,13 +437,14 @@
                 margin-left: 0;
                 margin-top: 5px;
             }
-        }
 
-        /* Icons */
-        .icon {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                width: 95%;
+            }
         }
     </style>
 </head>
@@ -386,6 +475,7 @@
         <div class="nav">
             <button class="nav-btn active" onclick="showSection('resume')">Resume</button>
             <button class="nav-btn" onclick="showSection('projects')">Projects</button>
+            <button class="nav-btn" onclick="showSection('dashboards')">Dashboards</button>
         </div>
 
         <!-- Resume Section -->
@@ -526,6 +616,25 @@
                     <p>Developed comprehensive analytics solution for a leading construction machinery manufacturer to optimize production scheduling and inventory management. Built interactive Power BI dashboards to identify bottlenecks, reduce delays, and improve operational efficiency.</p>
                 </div>
 
+                <!-- Dashboard Gallery for Project 1 -->
+                <div class="dashboard-gallery">
+                    <h4>📈 Sample Dashboards</h4>
+                    <div class="dashboard-grid">
+                        <div class="dashboard-item" onclick="openModal('demand-overview.jpg')">
+                            <img src="demand-overview.jpg" alt="Business KPIs Overview Dashboard" class="dashboard-image">
+                            <div class="dashboard-caption">Business KPIs & Performance Overview</div>
+                        </div>
+                        <div class="dashboard-item" onclick="openModal('demand-trends.jpg')">
+                            <img src="demand-trends.jpg" alt="Demand and Production Trends Dashboard" class="dashboard-image">
+                            <div class="dashboard-caption">Demand & Production Trends Analysis</div>
+                        </div>
+                        <div class="dashboard-item" onclick="openModal('demand-risks.png')">
+                            <img src="demand-risks.png" alt="Delays and Inventory Risk Dashboard" class="dashboard-image">
+                            <div class="dashboard-caption">Delays & Inventory Risk Assessment</div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="highlights-grid">
                     <div class="highlight-item">
                         <h4>Business Challenge</h4>
@@ -576,6 +685,19 @@
                     <p>Conducted comprehensive exploratory data analysis for a leading steel pipe manufacturer to minimize production waste and maximize material utilization. Identified patterns in offcut generation and developed data-driven recommendations to reduce scrap losses.</p>
                 </div>
 
+                <!-- Dashboard Gallery for Project 2 -->
+                <div class="dashboard-gallery">
+                    <h4>📊 Data Analysis Visualizations</h4>
+                    <div class="dashboard-grid">
+                        <div class="dashboard-item" style="background: #f8f9ff; border: 2px dashed #667eea; display: flex; align-items: center; justify-content: center; height: 200px;">
+                            <div style="text-align: center; color: #667eea;">
+                                <div style="font-size: 24px; margin-bottom: 10px;">📊</div>
+                                <div>Analysis Charts Coming Soon</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="highlights-grid">
                     <div class="highlight-item">
                         <h4>Business Problem</h4>
@@ -611,6 +733,63 @@
                 </div>
             </div>
         </div>
+
+        <!-- Dashboards Section -->
+        <div id="dashboards" class="content-section">
+            <h2 class="section-title">Interactive Dashboards Portfolio</h2>
+            
+            <div class="project-overview">
+                <h4>Dashboard Collection</h4>
+                <p>A comprehensive collection of interactive dashboards and data visualizations created using Power BI, Python, and Excel. Each dashboard tells a data story and provides actionable business insights.</p>
+            </div>
+
+            <div class="dashboard-gallery">
+                <h4>🔍 All Dashboards</h4>
+                <div class="dashboard-grid">
+                    <div class="dashboard-item" onclick="openModal('demand-overview.jpg')">
+                        <img src="demand-overview.jpg" alt="KPI Overview" class="dashboard-image">
+                        <div class="dashboard-caption">
+                            <strong>KPI Performance Dashboard</strong><br>
+                            Real-time monitoring of key business metrics and performance indicators
+                        </div>
+                    </div>
+                    <div class="dashboard-item" onclick="openModal('demand-trends.jpg')">
+                        <img src="demand-trends.jpg" alt="Trend Analysis" class="dashboard-image">
+                        <div class="dashboard-caption">
+                            <strong>Demand Forecasting Dashboard</strong><br>
+                            Seasonal patterns and production optimization insights
+                        </div>
+                    </div>
+                    <div class="dashboard-item" onclick="openModal('demand-risks.png')">
+                        <img src="demand-risks.png" alt="Risk Assessment" class="dashboard-image">
+                        <div class="dashboard-caption">
+                            <strong>Operational Risk Dashboard</strong><br>
+                            Early warning system for delays and inventory imbalances
+                        </div>
+                    </div>
+                    <div class="dashboard-item" style="background: #f8f9ff; border: 2px dashed #667eea; display: flex; align-items: center; justify-content: center; height: 200px;">
+                        <div style="text-align: center; color: #667eea;">
+                            <div style="font-size: 24px; margin-bottom: 10px;">📊</div>
+                            <div><strong>Steel Analysis Charts</strong><br>Coming Soon</div>
+                        </div>
+                    </div>
+                    <div class="dashboard-item" style="background: #f8f9ff; border: 2px dashed #667eea; display: flex; align-items: center; justify-content: center; height: 200px;">
+                        <div style="text-align: center; color: #667eea;">
+                            <div style="font-size: 24px; margin-bottom: 10px;">🔧</div>
+                            <div><strong>Optimization Dashboard</strong><br>Coming Soon</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for enlarged dashboard view -->
+    <div id="dashboardModal" class="modal" onclick="closeModal()">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <img id="modalImage" src="" alt="Dashboard">
+        </div>
     </div>
 
     <script>
@@ -630,13 +809,31 @@
             event.target.classList.add('active');
         }
 
+        function openModal(imageSrc) {
+            const modal = document.getElementById('dashboardModal');
+            const modalImg = document.getElementById('modalImage');
+            modal.style.display = 'block';
+            modalImg.src = imageSrc;
+        }
+
+        function closeModal() {
+            document.getElementById('dashboardModal').style.display = 'none';
+        }
+
         // Add smooth scrolling for better UX
         document.addEventListener('DOMContentLoaded', function() {
             // Add animation delays for staggered appearance
-            const items = document.querySelectorAll('.experience-item, .education-item, .project-card');
+            const items = document.querySelectorAll('.experience-item, .education-item, .project-card, .dashboard-item');
             items.forEach((item, index) => {
                 item.style.animationDelay = `${index * 0.1}s`;
             });
+        });
+
+        // Close modal with escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
         });
     </script>
 </body>
